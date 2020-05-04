@@ -8,7 +8,7 @@ public var diffTool: String? = nil
 /// allowedDifference: A value between 0 and 255, where 0 means color component values must match 100%
 ///
 ///     allowedDifference = 1
-public var allowedDifference: UInt8 = 0
+public var allowedDifference: UInt8 = 1
 
 /// Whether or not to record all new references.
 public var record = false
