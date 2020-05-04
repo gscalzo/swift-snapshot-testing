@@ -9,13 +9,14 @@ extension Diffing where Value == NSImage {
   /// A pixel-diffing strategy for NSImage that allows customizing how precise the matching must be.
   ///
   /// - Parameter precision: A value between 0 and 1, where 1 means the images must match 100% of their pixels.
+  /// - Parameter allowedDifference: A value between 0 and 255, where 0 means color component values must match 100%.
   /// - Returns: A new diffing strategy.
-  public static func image(precision: Float) -> Diffing {
+    public static func image(precision: Float, allowedDifference: UInt8 = 0) -> Diffing {
     return .init(
       toData: { NSImagePNGRepresentation($0)! },
       fromData: { NSImage(data: $0)! }
     ) { old, new in
-      guard !compare(old, new, precision: precision) else { return nil }
+        guard !compare(old, new, precision: precision, allowedDifference: allowedDifference) else { return nil }
       let difference = SnapshotTesting.diff(old, new)
       let message = new.size == old.size
         ? "Newly-taken snapshot does not match reference."
