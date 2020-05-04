@@ -9,14 +9,13 @@ extension Diffing where Value == UIImage {
   /// A pixel-diffing strategy for UIImage that allows customizing how precise the matching must be.
   ///
   /// - Parameter precision: A value between 0 and 1, where 1 means the images must match 100% of their pixels.
-  /// - Parameter allowedDifference: A value between 0 and 255, where 0 means color component values must match 100%.
   /// - Returns: A new diffing strategy.
-  public static func image(precision: Float, allowedDifference: UInt8 = 0) -> Diffing {
+  public static func image(precision: Float) -> Diffing {
     return Diffing(
       toData: { $0.pngData() ?? emptyImage().pngData()! },
       fromData: { UIImage(data: $0, scale: UIScreen.main.scale)! }
     ) { old, new in
-      guard !compare(old, new, precision: precision, allowedDifference: allowedDifference) else { return nil }
+      guard !compare(old, new, precision: precision) else { return nil }
       let difference = SnapshotTesting.diff(old, new)
       let message = new.size == old.size
         ? "Newly-taken snapshot does not match reference."
@@ -55,16 +54,15 @@ extension Snapshotting where Value == UIImage, Format == UIImage {
   /// A snapshot strategy for comparing images based on pixel equality.
   ///
   /// - Parameter precision: The percentage of pixels that must match.
-  /// - Parameter allowedDifference: Allowed difference between color component values to assume them as match.
-  public static func image(precision: Float, allowedDifference: UInt8 = 0) -> Snapshotting {
+  public static func image(precision: Float) -> Snapshotting {
     return .init(
       pathExtension: "png",
-      diffing: .image(precision: precision, allowedDifference: allowedDifference)
+      diffing: .image(precision: precision)
     )
   }
 }
 
-private func compare(_ old: UIImage, _ new: UIImage, precision: Float, allowedDifference: UInt8) -> Bool {
+private func compare(_ old: UIImage, _ new: UIImage, precision: Float) -> Bool {
   guard let oldCgImage = old.cgImage else { return false }
   guard let newCgImage = new.cgImage else { return false }
   guard oldCgImage.width != 0 else { return false }

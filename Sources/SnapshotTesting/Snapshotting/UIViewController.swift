@@ -12,19 +12,17 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
   /// - Parameters:
   ///   - config: A set of device configuration settings.
   ///   - precision: The percentage of pixels that must match.
-  ///   - allowedDifference: A value between 0 and 255, where 0 means color component values must match 100%
   ///   - size: A view size override.
   ///   - traits: A trait collection override.
   public static func image(
     on config: ViewImageConfig,
     precision: Float = 1,
-    allowedDifference: UInt8 = 0,
     size: CGSize? = nil,
     traits: UITraitCollection = .init()
     )
     -> Snapshotting {
 
-        return SimplySnapshotting.image(precision: precision, allowedDifference: allowedDifference).asyncPullback { viewController in
+        return SimplySnapshotting.image(precision: precision).asyncPullback { viewController in
         snapshotView(
           config: size.map { .init(safeArea: config.safeArea, size: $0, traits: config.traits) } ?? config,
           drawHierarchyInKeyWindow: false,
@@ -40,20 +38,17 @@ extension Snapshotting where Value == UIViewController, Format == UIImage {
   /// - Parameters:
   ///   - drawHierarchyInKeyWindow: Utilize the simulator's key window in order to render `UIAppearance` and `UIVisualEffect`s. This option requires a host application for your tests and will _not_ work for framework test targets.
   ///   - precision: The percentage of pixels that must match.
-  ///   - allowedDifference: A value between 0 and 255, where 0 means color component values must match 100%
   ///   - size: A view size override.
   ///   - traits: A trait collection override.
   public static func image(
     drawHierarchyInKeyWindow: Bool = false,
     precision: Float = 1,
-    allowedDifference: UInt8 = 0,
     size: CGSize? = nil,
     traits: UITraitCollection = .init()
     )
     -> Snapshotting {
 
-      return SimplySnapshotting.image(precision: precision,
-                                      allowedDifference: allowedDifference).asyncPullback { viewController in
+      return SimplySnapshotting.image(precision: precision).asyncPullback { viewController in
         snapshotView(
           config: .init(safeArea: .zero, size: size, traits: traits),
           drawHierarchyInKeyWindow: drawHierarchyInKeyWindow,
